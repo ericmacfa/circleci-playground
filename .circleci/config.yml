@@ -46,6 +46,6 @@ workflows:
   build:
     jobs:
       - create
-      # - show:
-      #     requires:
-      #       - create
+      - show:
+          requires:
+            - create
