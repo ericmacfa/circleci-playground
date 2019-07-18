@@ -1,0 +1,49 @@
+version: 2.1
+
+# Reused strings
+working_directory: &working_directory "/tmp/workspace"
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:10.16
+    working_directory: *working_directory
+
+# commands:
+#   create_and_store:
+#     description: "A test command"
+#     parameters:
+#       store_path:
+#         type: string
+#     steps:
+#       - run: echo "store_path-->'<< parameters.store_path >>'"
+#       - run:
+#           name: Create File
+#           command: node -pe '`${process.env.CIRCLE_PR_REPONAME}-${process.env.CIRCLE_WORKFLOW_ID}-${new Date().toISOString()}`' > << parameters.store_path >>
+
+jobs:
+  create:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Create File
+          command: node -pe '`${process.env.CIRCLE_PR_REPONAME}-${process.env.CIRCLE_WORKFLOW_ID}-${new Date().toISOString()}`' > ./artifact.txt
+      - store_artifacts:
+          path: ./artifact.txt
+  # show:
+  #   executor: node
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Show Artifacts
+  #         command: curl https://circleci.com/api/v1.1/project/github/ericmacfa/circleci-playground/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - create
+      # - show:
+      #     requires:
+      #       - create
