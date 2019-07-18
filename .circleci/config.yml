@@ -30,22 +30,36 @@ jobs:
       - checkout
       - run:
           name: Create File
-          command: node -pe '`${process.env.CIRCLE_PROJECT_REPONAME}-${process.env.CIRCLE_WORKFLOW_ID}-${new Date().toISOString()}`' > ./artifact.txt
+          command: |
+            node -pe '`${process.env.CIRCLE_PROJECT_REPONAME}-${process.env.CIRCLE_WORKFLOW_ID}-${new Date().toISOString()}`' > ./artifact.txt
+            cat ./artifact.txt
       - store_artifacts:
           path: ./artifact.txt
+  list:
+    executor: node
+    steps:
+      - checkout
+      - run: curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
   show:
     executor: node
     steps:
       - checkout
       - run:
           command: |
-            curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
+            curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed" \
+              | grep -o 'https://[^"]*' \
+              | tr -d \" \
+              | sed -e "s/$/?circle-token=$CIRCLE_TOKEN/" \
+              | wget -v -i -
 
 workflows:
   version: 2
   build:
     jobs:
       - create
-      - show:
+      - list:
           requires:
             - create
+      - show:
+          requires:
+            - list
