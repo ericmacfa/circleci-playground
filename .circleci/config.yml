@@ -8,7 +8,7 @@ executors:
     docker:
       - image: circleci/node:10.16
         environment:
-          API_URL: https://circleci.com/api/v1.1/project/github/ericmacfa/circleci-playground/
+          API_URL: https://circleci.com/api/v1.1/project/github/ericmacfa/circleci-playground
     working_directory: *working_directory
 
 # commands:
@@ -37,8 +37,6 @@ jobs:
     executor: node
     steps:
       - checkout
-      - run:
-          command: echo "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
       - run:
           command: |
             curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
