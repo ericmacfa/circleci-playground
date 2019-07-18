@@ -46,11 +46,9 @@ jobs:
       - checkout
       - run:
           command: |
-            curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed" \
-              | grep -o 'https://[^"]*' \
-              | tr -d \" \
-              | sed -e "s/$/?circle-token=$CIRCLE_TOKEN/" \
-              | wget -v -i -
+            curl -o ./data "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
+            cat ./data
+            cat ./data | grep -o 'https://[^"]*' | tr -d \" | sed -e "s/$/?circle-token=$CIRCLE_TOKEN/" | wget -v -i -
 
 workflows:
   version: 2
