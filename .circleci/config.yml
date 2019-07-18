@@ -38,8 +38,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Show Artifacts
-          command: curl $API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed
+          command: echo "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
+      - run:
+          command: |
+            curl "$API_URL/latest/artifacts?circle-token=$API_TOKEN&branch=master&filter=completed"
 
 workflows:
   version: 2
